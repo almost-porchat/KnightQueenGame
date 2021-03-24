@@ -247,18 +247,6 @@ function App () {
       return;
     }
 
-    if (move && !isLegalKnightMove(move.orig, move.dest)) {
-      setErrorSquares([createShape(move.orig, move.dest, 'red'), createShape(move.orig, move.dest, 'red')]);
-      setIsSetTimerRunning(false);
-      setLost(true);
-      return;
-    }
-    if (move && illegalToSquares.includes(move.dest)) {
-      setErrorSquares([createShape(move.dest, null, 'red')]);
-      setIsSetTimerRunning(false);
-      setLost(true);
-      return;
-    }
     if (move && move.dest === neededSquares[neededSquaresIndex]) {
       setSquaresReached((c) => c + 1);
       if (!(won || lost)) {
@@ -315,12 +303,13 @@ function App () {
             },
           }}
           onMove={(orig: Square, dest: Square) => {
-            if (orig !== 'd5') {
-              chess.remove(orig);
-              chess.put({ type: chess.KNIGHT, color: chess.WHITE }, dest);
+            if (isLegalKnightMove(orig, dest) && !illegalToSquares.includes(dest)){
+              if (orig !== 'd5') {
+                chess.remove(orig);
+                chess.put({ type: chess.KNIGHT, color: chess.WHITE }, dest);
+              }
+              setMove({ orig, dest });
             }
-            setMove({ orig, dest });
-
           }}
         />
       </div>
